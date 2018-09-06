@@ -7,11 +7,16 @@ This is the Arduino Library for Seeed's PCA9685 based products. For now, it's Gr
 ---
 The PCA9685 is an I2C-bus controlled 16-channel LED controller. It can be used as RGB or RGBA LED Drivers, Servo Drivers, etc.
 
+Please note that PCA9685 has a `ALL CALL I2C-bus address 0x70`, this address is for programming all the PCA9685s in the bus at the same time. This address is enabled by default and disabled after `PCA9685::init()` or `ServoDriver::init()`.
+
 
 ## Examples
 ---
 ### Servo
 This example drives 8 servos in turns. The library provides a sub-class of `class PCA9685`, named `ServoDriver`. In that class, `ServoDriver::setAngle()` can be used to control a servo directly.
+
+### Led
+PCA9685 can also drive leds with PWM.
 
 
 ## Change I2C address
