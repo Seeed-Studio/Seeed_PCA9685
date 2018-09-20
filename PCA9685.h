@@ -6,8 +6,10 @@
  * Website    : www.seeed.cc
  * Author     : Jerry Yip
  * Create Time: 2018-06
- * Version    : 0.1
- * Change Log :
+ * Version    : 0.2
+ * Change Log :  
+ *              v0.1 Init.
+ *              v0.2 Use external oscillator to improve accuracy of PWM frequency.
  *
  * The MIT License (MIT)
  *
@@ -43,8 +45,9 @@
 #define PCA9685_ALL_LED_ON_L    0xfa
 #define PCA9685_PRESCALE        0xfe
 
-#define PCA9685_RESTART_BIT     0x80       
 #define PCA9685_SLEEP_BIT       0x10
+#define PCA9685_EXTCLK_BIT      0x40  
+#define PCA9685_RESTART_BIT     0x80 
 
 class PCA9685
 {
@@ -64,13 +67,13 @@ public:
     
     /*************************************************************
     * Description
-    *    Reset PCA9685
+    *    Restart PCA9685
     * Parameter
     *    Null.
     * Return
     *    Null.
     *************************************************************/
-    void reset();
+    void restart();
 
     /*************************************************************
     * Description

@@ -8,14 +8,28 @@ PCA9685::PCA9685()
 void PCA9685::init(uint8_t addr)
 {
     _addr = addr;
-    reset();
-    setFrequency(1000);
+    restart();
+    setFrequency(1000);     // set default frequency
 }
 
-void PCA9685::reset()
+void PCA9685::restart()
 {
-    I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, PCA9685_RESTART_BIT);
+    I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, PCA9685_RESTART_BIT); 
     delay(10);
+
+    // Set to sleep first, to turn off internal oscillator
+    I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, PCA9685_SLEEP_BIT);
+    delay(2);
+    
+    // Write logic 1 to both SLEEP bit and EXTCLK bit, the switch is now made. Enable the external oscillator
+    I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, PCA9685_EXTCLK_BIT | PCA9685_SLEEP_BIT);
+
+    // Turn on oscillator now
+    I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, 0x00);
+    delay(2);
+
+    // // restart again
+    // I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, PCA9685_RESTART_BIT);
 }
 
 void PCA9685::setFrequency(uint16_t freq)
@@ -27,13 +41,18 @@ void PCA9685::setFrequency(uint16_t freq)
     uint8_t pre_scale = floor(prescaleval + 0.5);
 
     I2Cdev::readByte(_addr, PCA9685_MODE1_REG, _buffer);
-    uint8_t oldmode = _buffer[0];
-    uint8_t newmode = (oldmode&0x7F) | PCA9685_SLEEP_BIT; // set to sleep first
-    I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, newmode); 
-    I2Cdev::writeByte(_addr, PCA9685_PRESCALE, pre_scale);   // set the prescaler
-    I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, oldmode);
-    delay(5);
-    I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, oldmode| 0xa0);   //  This sets the MODE1 register to turn on auto increment.
+    // Serial.print("oldmode = ");
+    // Serial.println(_buffer[0], BIN);
+
+    // PRE_SCALE can only be set when SLEEP is logic 1
+    // go to sleep
+    I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, (_buffer[0] & 0x7F) | 0x10);  
+    delay(2);
+    I2Cdev::writeByte(_addr, PCA9685_PRESCALE, pre_scale); 
+    I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, _buffer[0]); 
+    delay(2);
+    I2Cdev::writeByte(_addr, PCA9685_MODE1_REG, _buffer[0]|0xa0);  
+    delay(2);
 }
 
 void PCA9685::setPwm(uint8_t pin, uint16_t led_on, uint16_t led_off)
@@ -63,7 +82,7 @@ ServoDriver::ServoDriver()
 void ServoDriver::init(uint8_t addr)
 {
     _addr = addr;
-    reset();
+    restart();
     // default pulse range of servo: 0.5ms~2.5ms
     setServoPulseRange(500,2500);
     // default servo working frequency: 50Hz/20ms
