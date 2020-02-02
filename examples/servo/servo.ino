@@ -4,8 +4,7 @@
 ServoDriver servo;
 
 
-void setup()
-{
+void setup() {
     // join I2C bus (I2Cdev library doesn't do this automatically)
     Wire.begin();
     Serial.begin(9600);
@@ -14,11 +13,9 @@ void setup()
     // servo.setServoPulseRange(600,2400,180);
 }
 
-void loop()
-{
+void loop() {
     // Drive 8 servos in turns
-    for (int i = 1; i < 9; i++)
-    {
+    for (int i = 1; i < 9; i++) {
         servo.setAngle(i, 0);
         delay(1000);
         servo.setAngle(i, 90);
