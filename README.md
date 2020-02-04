@@ -1,4 +1,4 @@
-# Seeed PCA9685 Library
+# Seeed PCA9685 Library  [![Build Status](https://travis-ci.com/Seeed-Studio/Seeed_PCA9685.svg?branch=master)](https://travis-ci.com/Seeed-Studio/Seeed_PCA9685)
 ---
 This is the Arduino Library for Seeed's PCA9685 based products. For now, it's Grove - 16-Channel Servo Driver(PCA9685).
 
