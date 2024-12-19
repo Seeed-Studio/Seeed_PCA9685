@@ -43,6 +43,12 @@
 
 #include "I2Cdev.h"
 
+#ifdef ESP32
+uint8_t min(uint8_t a, uint8_t b) {
+    return (a < b) ? a : b;
+}
+#endif
+
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
 
     #ifdef I2CDEV_IMPLEMENTATION_WARNINGS
